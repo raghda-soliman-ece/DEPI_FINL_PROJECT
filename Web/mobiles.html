@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الموبايلات والتابلت | جوميا مصر</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><div class="top-bar-links"><a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a><a href="#"><i class="fas fa-truck"></i> تتبع الطلبات</a></div><div class="top-bar-promo"><i class="fas fa-tag"></i> توصيل مجاني لطلبك الأول!</div></div></div>
+<header class="main-header"><div class="container header-inner"><div class="logo"><a href="index.html"><span class="logo-text">jumia</span></a></div><div class="search-container"><div class="search-form"><input type="text" id="main-search" placeholder="ابحث عن موبايلات..."><button class="btn btn-orange" onclick="handleSearch()">بحث</button></div></div><div class="user-actions"><a href="login.html" class="action-link login-link" id="login-header-link"><i class="far fa-user"></i><span>تسجيل الدخول</span></a><a href="account.html" class="action-link" id="wishlist-header-link"><div class="cart-icon-wrapper"><i class="far fa-heart"></i><span class="wishlist-count">0</span></div><span>مفضلتي</span></a><a href="cart.html" class="action-link"><div class="cart-icon-wrapper"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>السلة</span></a></div></div></header>
+<nav class="main-nav"><div class="container"><ul class="nav-list"><li><a href="index.html" class="nav-item">الرئيسية</a></li><li><a href="mobiles.html" class="nav-item active">موبايلات</a></li><li><a href="electronics.html" class="nav-item">إلكترونيات</a></li><li><a href="home-appliances.html" class="nav-item">أجهزة منزلية</a></li><li><a href="fashion.html" class="nav-item">أزياء</a></li><li><a href="supermarket.html" class="nav-item">سوبر ماركت</a></li><li><a href="kids.html" class="nav-item">ألعاب أطفال</a></li></ul></div></nav>
+
+<main class="container">
+    <div class="breadcrumb"><a href="index.html">الرئيسية</a><span>›</span> الموبايلات والتابلت</div>
+
+    <div class="page-banner" style="background: linear-gradient(135deg, #1a1a2e, #0f3460);">
+        <h1><i class="fas fa-mobile-alt"></i> الموبايلات والتابلت</h1>
+        <p>أحدث الهواتف الذكية والتابلت بأفضل الأسعار</p>
+    </div>
+
+
+
+    <section class="products-section">
+        <div class="section-header"><h2><i class="fas fa-mobile-alt"></i> الموبايلات</h2><a href="#" class="view-all">عرض الكل <i class="fas fa-chevron-left"></i></a></div>
+        <div class="product-grid">
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge">الأكثر مبيعاً</span><div class="product-img-wrap"><img src="https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=300&q=80" class="product-image" alt="Samsung S24" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Phone'"></div><div class="product-info"><h3>سامسونج جالاكسي S24 - 256 جيجا</h3><div class="product-price">EGP 32,999</div><div class="price-row"><span class="product-old-price">35,000 EGP</span><span class="product-discount">-6%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>(203)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Samsung S24', 32999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge badge-blue">وصل حديثاً</span><div class="product-img-wrap"><img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=300&q=80" class="product-image" alt="iPhone 15" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=iPhone'"></div><div class="product-info"><h3>أبل آيفون 15 - 128 جيجا</h3><div class="product-price">EGP 45,999</div><div class="price-row"><span class="product-old-price">48,000 EGP</span><span class="product-discount">-4%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(412)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'iPhone 15', 45999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge badge-red">خصم</span><div class="product-img-wrap"><img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=300&q=80" class="product-image" alt="Samsung A54" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Phone'"></div><div class="product-info"><h3>سامسونج جالاكسي A54 - 128 جيجا</h3><div class="product-price">EGP 15,499</div><div class="price-row"><span class="product-old-price">16,999 EGP</span><span class="product-discount">-9%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(154)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Samsung A54', 15499)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><div class="product-img-wrap"><img src="images/redmi.jpg" class="product-image" alt="Xiaomi 14" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Phone'"></div><div class="product-info"><h3>شاومي 14 Pro - 512 جيجا</h3><div class="product-price">EGP 28,500</div><div class="price-row"><span class="product-old-price">30,000 EGP</span><span class="product-discount">-5%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(98)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Xiaomi 14 Pro', 28500)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge">جوميا إكسبريس</span><div class="product-img-wrap"><img src="https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=300&q=80" class="product-image" alt="Oppo A78" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Phone'"></div><div class="product-info"><h3>أوبو A78 - 256 جيجا، 8 رام</h3><div class="product-price">EGP 10,999</div><div class="price-row"><span class="product-old-price">12,000 EGP</span><span class="product-discount">-8%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(76)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Oppo A78', 10999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><div class="product-img-wrap"><img src="https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=300&q=80" class="product-image" alt="Samsung Tab" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Tablet'"></div><div class="product-info"><h3>سامسونج جالاكسي تاب A8 - 64 جيجا</h3><div class="product-price">EGP 11,999</div><div class="price-row"><span class="product-old-price">13,500 EGP</span><span class="product-discount">-11%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><span>(55)</span></div></div></a><button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Samsung Tab A8', 11999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 جوميا مصر - جميع الحقوق محفوظة</p><div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-youtube"></i></a></div></div></div></footer>
+<script src="script.js?v=1779253392"></script>
+</body></html>

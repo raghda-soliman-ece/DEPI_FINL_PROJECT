@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جوميا مصر | تسوق عبر الإنترنت للإلكترونيات والأزياء وغيرها</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <div class="top-bar-links">
+                <a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a>
+                <a href="#"><i class="fas fa-truck"></i> تتبع الطلبات</a>
+                <a href="#"><i class="fas fa-store"></i> بِع على جوميا</a>
+            </div>
+            <div class="top-bar-promo">
+                <i class="fas fa-tag"></i> استمتع بتوصيل مجاني لطلبك الأول!
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container header-inner">
+            <div class="logo">
+                <a href="index.html"><span class="logo-text">jumia</span></a>
+            </div>
+
+            <div class="search-container">
+                <div class="search-form">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="main-search" placeholder="ابحث عن منتجات، فئات أو ماركات...">
+                    <button class="btn btn-orange" onclick="handleSearch()">بحث</button>
+                </div>
+            </div>
+
+            <div class="user-actions">
+                <a href="login.html" class="action-link login-link" id="login-header-link">
+                    <i class="far fa-user"></i>
+                    <span>تسجيل الدخول</span>
+                </a>
+                <a href="account.html" class="action-link" id="wishlist-header-link">
+                    <div class="cart-icon-wrapper">
+                        <i class="far fa-heart"></i>
+                        <span class="wishlist-count">0</span>
+                    </div>
+                    <span>مفضلتي</span>
+                </a>
+                <a href="cart.html" class="action-link">
+                    <div class="cart-icon-wrapper">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </div>
+                    <span>السلة</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-item active">الرئيسية</a></li>
+                <li><a href="mobiles.html" class="nav-item">موبايلات</a></li>
+                <li><a href="electronics.html" class="nav-item">إلكترونيات</a></li>
+                <li><a href="home-appliances.html" class="nav-item">أجهزة منزلية</a></li>
+                <li><a href="fashion.html" class="nav-item">أزياء</a></li>
+                <li><a href="supermarket.html" class="nav-item">سوبر ماركت</a></li>
+                <li><a href="kids.html" class="nav-item">ألعاب أطفال</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="container">
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-grid">
+
+                <!-- Sidebar -->
+                <aside class="sidebar-categories">
+                    <ul class="category-list">
+                        <li><a href="mobiles.html"><i class="fas fa-mobile-alt"></i> الموبايلات والتابلت</a></li>
+                        <li><a href="electronics.html"><i class="fas fa-tv"></i> إلكترونيات</a></li>
+                        <li><a href="home-appliances.html"><i class="fas fa-home"></i> الأجهزة المنزلية</a></li>
+                        <li><a href="fashion.html"><i class="fas fa-tshirt"></i> ملابس وأزياء</a></li>
+                        <li><a href="supermarket.html"><i class="fas fa-shopping-basket"></i> سوبر ماركت</a></li>
+                        <li><a href="kids.html"><i class="fas fa-baby"></i> منتجات الأطفال</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Hero Slider -->
+                <div class="hero-slider" id="hero-slider">
+                    <div class="slide active" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+                        <div class="slide-content">
+                            <span class="slide-badge">عروض محدودة</span>
+                            <h2>أقوى العروض على الإلكترونيات</h2>
+                            <p>خصومات تصل إلى <strong>50%</strong> على أرقى الماركات العالمية</p>
+                            <a href="index.html" class="btn btn-orange">تسوق الآن <i class="fas fa-arrow-left"></i></a>
+                        </div>
+                        <div><img src="images/airpods.jpg" alt="Electronics" style="height: 200px; width: auto; object-fit: cover; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: rotate(-5deg);"></div>
+                    </div>
+                    <div class="slide" style="background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);">
+                        <div class="slide-content">
+                            <span class="slide-badge">وصل حديثاً</span>
+                            <h2>أحدث أجهزة الألعاب والترفيه</h2>
+                            <p>استمتع بتجربة الجيل الجديد من الألعاب</p>
+                            <a href="index.html" class="btn btn-orange">اكتشف الآن <i class="fas fa-arrow-left"></i></a>
+                        </div>
+                        <div><img src="images/ps5.jpg" alt="PlayStation 5" style="height: 200px; width: auto; object-fit: cover; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: rotate(5deg);"></div>
+                    </div>
+                    <div class="slide" style="background: linear-gradient(135deg, #c94b4b 0%, #4b134f 100%);">
+                        <div class="slide-content">
+                            <span class="slide-badge">خصم خاص</span>
+                            <h2>أحدث صيحات الأزياء والموضة</h2>
+                            <p>تشكيلة رائعة تناسب جميع الأذواق</p>
+                            <a href="index.html" class="btn btn-orange">تسوق الآن <i class="fas fa-arrow-left"></i></a>
+                        </div>
+                        <div><img src="images/dress.jpg" alt="Fashion" style="height: 200px; width: 200px; object-fit: cover; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: rotate(-5deg); object-position: top;"></div>
+                    </div>
+
+                    <!-- Slider Controls -->
+                    <div class="slider-dots">
+                        <button class="dot active" onclick="goToSlide(0)"></button>
+                        <button class="dot" onclick="goToSlide(1)"></button>
+                        <button class="dot" onclick="goToSlide(2)"></button>
+                    </div>
+                    <button class="slider-arrow right" onclick="prevSlide()"><i class="fas fa-chevron-right"></i></button>
+                    <button class="slider-arrow left" onclick="nextSlide()"><i class="fas fa-chevron-left"></i></button>
+                </div>
+
+                <!-- Promo Cards -->
+                <div class="hero-promos">
+                    <div class="promo-card" style="background: linear-gradient(135deg, #f68b1e, #e05c00);">
+                        <div class="promo-text">
+                            <h3>فلاش سيل</h3>
+                            <p>خصومات لوقت محدود</p>
+                        </div>
+                        <i class="fas fa-bolt promo-icon"></i>
+                    </div>
+                    <div class="promo-card" style="background: linear-gradient(135deg, #2193b0, #6dd5ed);">
+                        <div class="promo-text">
+                            <h3>توصيل سريع</h3>
+                            <p>جوميا إكسبريس</p>
+                        </div>
+                        <i class="fas fa-shipping-fast promo-icon"></i>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products-section">
+            <div class="section-header">
+                <h2><i class="fas fa-fire"></i> أحدث المنتجات</h2>
+                <a href="index.html" class="view-all">عرض الكل <i class="fas fa-chevron-left"></i></a>
+            </div>
+            <div class="product-grid">
+
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'سامسونج A54',15499)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <span class="product-badge">الأكثر مبيعاً</span>
+                        <div class="product-img-wrap">
+                            <img src="images/redmi.jpg" alt="سامسونج جالاكسي A54" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Phone'">
+                        </div>
+                        <div class="product-info">
+                            <h3>سامسونج جالاكسي A54 - 128 جيجا، 8 رام</h3>
+                            <div class="product-price">EGP 15,499</div>
+                            <div class="price-row"><span class="product-old-price">16,999 EGP</span><span class="product-discount">-9%</span></div>
+                            <div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(154)</span></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this,'سامسونج A54',15499)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'لينوفو i5',22999)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <span class="product-badge badge-blue">وصل حديثاً</span>
+                        <div class="product-img-wrap">
+                            <img src="images/ps5.jpg" alt="لاب توب لينوفو" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Laptop'">
+                        </div>
+                        <div class="product-info">
+                            <h3>لاب توب لينوفو ايديا باد 3 - Intel Core i5</h3>
+                            <div class="product-price">EGP 22,999</div>
+                            <div class="price-row"><span class="product-old-price">24,500 EGP</span><span class="product-discount">-6%</span></div>
+                            <div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(89)</span></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this,'لينوفو i5',22999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'طقم حلل جرانيت',4200)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <span class="product-badge badge-red">خصم خاص</span>
+                        <div class="product-img-wrap">
+                            <img src="images/pots.jpg" alt="طقم حلل" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Kitchen'">
+                        </div>
+                        <div class="product-info">
+                            <h3>طقم حلل جرانيت 9 قطع - سافلون</h3>
+                            <div class="product-price">EGP 4,200</div>
+                            <div class="price-row"><span class="product-old-price">5,100 EGP</span><span class="product-discount">-18%</span></div>
+                            <div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>(312)</span></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this,'طقم حلل جرانيت',4200)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'AirPods Pro',8999)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <div class="product-img-wrap">
+                            <img src="images/airpods.jpg" alt="سماعات ايربودز" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Earbuds'">
+                        </div>
+                        <div class="product-info">
+                            <h3>سماعات Apple AirPods Pro (الجيل الثاني)</h3>
+                            <div class="product-price">EGP 8,999</div>
+                            <div class="price-row"><span class="product-old-price">9,500 EGP</span><span class="product-discount">-5%</span></div>
+                            <div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>(500+)</span></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this,'AirPods Pro',8999)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'قلاية فيليبس XL',6499)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <span class="product-badge">جوميا إكسبريس</span>
+                        <div class="product-img-wrap">
+                            <img src="images/airfryer.jpg" alt="قلاية هوائية" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Fryer'">
+                        </div>
+                        <div class="product-info">
+                            <h3>قلاية هوائية فيليبس XL - 6.2 لتر</h3>
+                            <div class="product-price">EGP 6,499</div>
+                            <div class="price-row"><span class="product-old-price">7,200 EGP</span><span class="product-discount">-10%</span></div>
+                            <div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(278)</span></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this,'قلاية فيليبس XL',6499)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this,'Adidas Ultraboost',5200)" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <div class="product-img-wrap">
+                            <img src="images/shoes.jpg" alt="حذاء اديداس" class="product-image" onerror="this.src='https://placehold.co/300x300/f5f5f5/ccc?text=Shoes'">
+                        </div>
+                        <div class="product-info">
+                            <h3>حذاء ركض Adidas Ultraboost - أسود</h3>
+                            <div class="product-price">EGP 5,200</div>
+                            <div class="price-row"><span class="product-old-price">6,000 EGP</span><span class="product-discount">-13%</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                <span>(195)</span>
+                            </div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange add-to-cart" onclick="addToCart(this, 'Adidas Ultraboost', 5200)">
+                        <i class="fas fa-shopping-cart"></i> اضف للسلة
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <h3>تحتاج مساعدة؟</h3>
+                    <ul>
+                        <li><a href="#">مركز المساعدة</a></li>
+                        <li><a href="#">كيف تشتري من جوميا؟</a></li>
+                        <li><a href="#">الجدول الزمني للتوصيل</a></li>
+                        <li><a href="#">الإرجاع والاسترداد</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>عن جوميا</h3>
+                    <ul>
+                        <li><a href="#">جوميا لوجيستيكس</a></li>
+                        <li><a href="#">كُن شريكاً لوجيستياً</a></li>
+                        <li><a href="#">عن جوميا</a></li>
+                        <li><a href="#">فرص العمل</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>اكسب مالاً مع جوميا</h3>
+                    <ul>
+                        <li><a href="#">بِع على جوميا</a></li>
+                        <li><a href="#">كن شريكاً مبيعات</a></li>
+                        <li><a href="#">الشركات الناشئة</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column footer-newsletter">
+                    <h3>جديدنا عبر البريد</h3>
+                    <p>سجل الآن للحصول على تحديثات العروض</p>
+                    <input type="email" placeholder="بريدك الإلكتروني">
+                    <button class="btn btn-orange" style="width:100%;margin-top:8px;">اشتراك</button>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 جوميا مصر - جميع الحقوق محفوظة</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js?v=1779253392"></script>
+</body>
+</html>
