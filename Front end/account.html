@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي | جوميا مصر</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .account-layout { display: grid; grid-template-columns: 260px 1fr; gap: 25px; margin: 25px 0; }
+        .account-sidebar { background: white; border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden; height: fit-content; position: sticky; top: 90px; }
+        .account-user-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 25px; text-align: center; color: white; }
+        .account-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 12px; border: 3px solid rgba(255,255,255,0.4); }
+        .account-user-card h3 { font-size: 18px; font-weight: 800; }
+        .account-user-card p { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+        .account-nav { padding: 10px 0; }
+        .account-nav-item { display: flex; align-items: center; gap: 12px; padding: 13px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); border-right: 3px solid transparent; }
+        .account-nav-item i { width: 20px; text-align: center; color: #888; }
+        .account-nav-item:hover { background: rgba(246,139,30,0.06); color: var(--primary); }
+        .account-nav-item:hover i { color: var(--primary); }
+        .account-nav-item.active { background: rgba(246,139,30,0.08); color: var(--primary); border-right-color: var(--primary); font-weight: 800; }
+        .account-nav-item.active i { color: var(--primary); }
+        .account-nav-item .nav-badge { background: var(--primary); color: white; font-size: 10px; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: auto; padding: 0 4px; }
+        .logout-btn { color: #e53935 !important; border-top: 1px solid var(--border); margin-top: 5px; }
+        .logout-btn i { color: #e53935 !important; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .account-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 25px; margin-bottom: 20px; }
+        .account-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .account-card h3 i { color: var(--primary); }
+        .profile-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .profile-form .form-group { margin-bottom: 15px; }
+        .profile-form label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+        .profile-form input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 14px; outline: none; transition: var(--transition); }
+        .profile-form input:focus { border-color: var(--primary); }
+
+        /* Orders */
+        .order-card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 15px; }
+        .order-header { background: #fafafa; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .order-header .order-id { font-weight: 800; font-size: 15px; }
+        .order-header .order-date { font-size: 12px; color: var(--muted); }
+        .order-status { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+        .status-processing { background: #fff3e0; color: #f57c00; }
+        .status-shipped { background: #e3f2fd; color: #1976d2; }
+        .status-delivered { background: #e8f5e9; color: #388e3c; }
+        .order-body { padding: 15px 20px; }
+        .order-item-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+        .order-item-row:last-child { border: none; }
+        .order-item-img { width: 50px; height: 50px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
+        .order-footer { padding: 12px 20px; background: #fafafa; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); }
+        .order-total { font-size: 17px; font-weight: 900; color: var(--primary); }
+        .track-btn { font-size: 13px; }
+
+        /* Tracking */
+        .tracking-steps { display: flex; justify-content: space-between; position: relative; margin: 30px 0; padding: 0 10px; }
+        .tracking-steps::before { content: ''; position: absolute; top: 18px; right: 10%; left: 10%; height: 3px; background: var(--border); z-index: 0; }
+        .track-step { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; }
+        .track-dot { width: 36px; height: 36px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; }
+        .track-dot.done { background: #4caf50; }
+        .track-dot.active { background: var(--primary); box-shadow: 0 0 0 4px rgba(246,139,30,0.2); }
+        .track-label { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; }
+        .track-label.done { color: #4caf50; }
+        .track-label.active { color: var(--primary); }
+
+        /* Wishlist */
+        .wishlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+
+        /* Messages */
+        .message-item { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .msg-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .msg-icon.orange { background: rgba(246,139,30,0.1); color: var(--primary); }
+        .msg-icon.blue { background: rgba(33,150,243,0.1); color: #2196f3; }
+        .msg-icon.green { background: rgba(76,175,80,0.1); color: #4caf50; }
+        .msg-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+        .msg-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+        .msg-time { font-size: 11px; color: #bbb; margin-top: 4px; }
+        .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); margin-top: 6px; flex-shrink: 0; }
+
+        /* Coupons */
+        .coupon-card { border: 2px dashed var(--primary); border-radius: var(--radius); padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 12px; background: rgba(246,139,30,0.03); transition: var(--transition); }
+        .coupon-card:hover { background: rgba(246,139,30,0.07); }
+        .coupon-icon { width: 55px; height: 55px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; flex-shrink: 0; }
+        .coupon-code { font-size: 20px; font-weight: 900; letter-spacing: 2px; color: var(--primary); font-family: monospace; }
+        .coupon-desc { font-size: 13px; color: var(--muted); margin-top: 3px; }
+        .coupon-exp { font-size: 11px; color: #bbb; margin-top: 5px; }
+        .copy-btn { margin-right: auto; font-size: 12px; }
+
+        @media(max-width: 768px) { .account-layout { grid-template-columns: 1fr; } .profile-form .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><div class="top-bar-links"><a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a></div><div class="top-bar-promo"><i class="fas fa-tag"></i> توصيل مجاني لطلبك الأول!</div></div></div>
+<header class="main-header"><div class="container header-inner"><div class="logo"><a href="index.html"><span class="logo-text">jumia</span></a></div><div class="search-container"><div class="search-form"><input type="text" id="main-search" placeholder="ابحث عن منتجات..."><button class="btn btn-orange" onclick="handleSearch()">بحث</button></div></div><div class="user-actions"><a href="account.html" class="action-link login-link" style="color:var(--primary);"><i class="far fa-user-circle"></i><span>حسابي</span></a><a href="cart.html" class="action-link"><div class="cart-icon-wrapper"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>السلة</span></a></div></div></header>
+<nav class="main-nav"><div class="container"><ul class="nav-list"><li><a href="index.html" class="nav-item">الرئيسية</a></li><li><a href="mobiles.html" class="nav-item">موبايلات</a></li><li><a href="electronics.html" class="nav-item">إلكترونيات</a></li><li><a href="home-appliances.html" class="nav-item">أجهزة منزلية</a></li><li><a href="fashion.html" class="nav-item">أزياء</a></li><li><a href="supermarket.html" class="nav-item">سوبر ماركت</a></li><li><a href="kids.html" class="nav-item">ألعاب أطفال</a></li></ul></div></nav>
+
+<main class="container">
+    <div class="breadcrumb"><a href="index.html">الرئيسية</a><span>›</span> حسابي</div>
+
+    <div class="account-layout">
+        <!-- Sidebar -->
+        <aside class="account-sidebar">
+            <div class="account-user-card">
+                <div class="account-avatar" id="avatar-icon"><i class="fas fa-user"></i></div>
+                <h3 id="user-full-name">مرحباً!</h3>
+                <p id="user-email-display">-</p>
+            </div>
+            <nav class="account-nav">
+                <div class="account-nav-item active" onclick="switchTab('profile', this)"><i class="fas fa-user"></i> بياناتي الشخصية</div>
+                <div class="account-nav-item" onclick="switchTab('orders', this)"><i class="fas fa-box"></i> طلباتي <span class="nav-badge" id="orders-badge">0</span></div>
+                <div class="account-nav-item" onclick="switchTab('wishlist', this)"><i class="fas fa-heart"></i> المفضلة <span class="nav-badge" id="wish-badge">0</span></div>
+                <div class="account-nav-item" onclick="switchTab('messages', this)"><i class="fas fa-bell"></i> الإشعارات <span class="nav-badge">3</span></div>
+                <div class="account-nav-item" onclick="switchTab('coupons', this)"><i class="fas fa-ticket-alt"></i> قسائمي الخصم</div>
+                <div class="account-nav-item" onclick="switchTab('security', this)"><i class="fas fa-lock"></i> الأمان وكلمة المرور</div>
+                <div class="account-nav-item logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
+            </nav>
+        </aside>
+
+        <!-- Content -->
+        <div class="account-content">
+
+            <!-- Profile Tab -->
+            <div class="tab-content active" id="tab-profile">
+                <div class="account-card">
+                    <h3><i class="fas fa-user"></i> بياناتي الشخصية</h3>
+                    <div class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group"><label>الاسم الأول</label><input type="text" id="p-fname" placeholder="مثال: محمد"></div>
+                            <div class="form-group"><label>الاسم الأخير</label><input type="text" id="p-lname" placeholder="مثال: أحمد"></div>
+                        </div>
+                        <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="p-email" placeholder="example@email.com"></div>
+                        <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="p-phone" placeholder="01xxxxxxxxx"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>المحافظة</label><input type="text" id="p-gov" placeholder="مثال: القاهرة"></div>
+                            <div class="form-group"><label>العنوان</label><input type="text" id="p-address" placeholder="الشارع، رقم المبنى..."></div>
+                        </div>
+                        <button class="btn btn-orange" onclick="saveProfile()"><i class="fas fa-save"></i> حفظ التغييرات</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="tab-content" id="tab-orders">
+                <div class="account-card">
+                    <h3><i class="fas fa-box"></i> طلباتي</h3>
+                    <div id="orders-container">
+                        <div style="text-align:center;padding:50px;color:var(--muted);"><i class="fas fa-box-open" style="font-size:60px;color:#eee;"></i><h3 style="margin-top:15px;">لا توجد طلبات بعد</h3><p>ابدأ التسوق الآن!</p><a href="index.html" class="btn btn-orange" style="margin-top:20px;display:inline-flex;">تسوق الآن</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist Tab -->
+            <div class="tab-content" id="tab-wishlist">
+                <div class="account-card">
+                    <h3><i class="fas fa-heart"></i> المفضلة</h3>
+                    <div class="wishlist-grid" id="wishlist-grid"></div>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div class="tab-content" id="tab-messages">
+                <div class="account-card">
+                    <h3><i class="fas fa-bell"></i> الإشعارات والرسايل</h3>
+                    <div class="message-item">
+                        <div class="msg-icon orange"><i class="fas fa-tag"></i></div>
+                        <div style="flex:1;">
+                            <div class="msg-title">عرض خاص ليك! 🔥</div>
+                            <div class="msg-text">استخدم كوبون JUMIA10 واحصل على خصم 10% على طلبك القادم. العرض سارى لمدة 7 أيام فقط!</div>
+                            <div class="msg-time">منذ ساعتين</div>
+                        </div>
+                        <div class="unread-dot"></div>
+                    </div>
+                    <div class="message-item">
+                        <div class="msg-icon green"><i class="fas fa-truck"></i></div>
+                        <div style="flex:1;">
+                            <div class="msg-title">طلبك في الطريق إليك! 🚚</div>
+                            <div class="msg-text">رقم الطلب #JM-38291 جاري شحنه الآن وسيصل خلال 1-3 أيام عمل.</div>
+                            <div class="msg-time">أمس، 3:45 مساءً</div>
+                        </div>
+                        <div class="unread-dot"></div>
+                    </div>
+                    <div class="message-item">
+                        <div class="msg-icon blue"><i class="fas fa-star"></i></div>
+                        <div style="flex:1;">
+                            <div class="msg-title">قيّم تجربتك معنا ⭐</div>
+                            <div class="msg-text">يسعدنا معرفة رأيك في المنتجات التي اشتريتها مؤخراً. تقييمك يساعدنا نتحسن أكتر!</div>
+                            <div class="msg-time">منذ 3 أيام</div>
+                        </div>
+                    </div>
+                    <div class="message-item">
+                        <div class="msg-icon orange"><i class="fas fa-gift"></i></div>
+                        <div style="flex:1;">
+                            <div class="msg-title">مستوى VIP! 🎉</div>
+                            <div class="msg-text">مبروك! أنت الآن عضو جوميا ستار وتستمتع بشحن مجاني على كل طلباتك وعروض حصرية.</div>
+                            <div class="msg-time">منذ أسبوع</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coupons Tab -->
+            <div class="tab-content" id="tab-coupons">
+                <div class="account-card">
+                    <h3><i class="fas fa-ticket-alt"></i> قسائم الخصم المتاحة</h3>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:14px;">استخدم هذه الكوبونات عند الدفع للاستمتاع بخصومات رائعة!</p>
+
+                    <div class="coupon-card">
+                        <div class="coupon-icon"><i class="fas fa-percent"></i></div>
+                        <div style="flex:1;">
+                            <div class="coupon-code">JUMIA10</div>
+                            <div class="coupon-desc">خصم 10% على جميع المنتجات</div>
+                            <div class="coupon-exp"><i class="far fa-clock"></i> صالح حتى 31 ديسمبر 2024</div>
+                        </div>
+                        <button class="btn btn-outline copy-btn" onclick="copyCode('JUMIA10', this)"><i class="fas fa-copy"></i> نسخ</button>
+                    </div>
+
+                    <div class="coupon-card">
+                        <div class="coupon-icon"><i class="fas fa-gift"></i></div>
+                        <div style="flex:1;">
+                            <div class="coupon-code">WELCOME50</div>
+                            <div class="coupon-desc">خصم 50 جنيه على أول طلب</div>
+                            <div class="coupon-exp"><i class="far fa-clock"></i> صالح لمرة واحدة فقط</div>
+                        </div>
+                        <button class="btn btn-outline copy-btn" onclick="copyCode('WELCOME50', this)"><i class="fas fa-copy"></i> نسخ</button>
+                    </div>
+
+                    <div class="coupon-card">
+                        <div class="coupon-icon" style="background:#2196f3;"><i class="fas fa-snowflake"></i></div>
+                        <div style="flex:1;">
+                            <div class="coupon-code">SALE20</div>
+                            <div class="coupon-desc">خصم 20% على قسم الإلكترونيات</div>
+                            <div class="coupon-exp"><i class="far fa-clock"></i> صالح حتى 15 يونيو 2024</div>
+                        </div>
+                        <button class="btn btn-outline copy-btn" onclick="copyCode('SALE20', this)"><i class="fas fa-copy"></i> نسخ</button>
+                    </div>
+
+                    <div class="coupon-card">
+                        <div class="coupon-icon" style="background:#4caf50;"><i class="fas fa-sun"></i></div>
+                        <div style="flex:1;">
+                            <div class="coupon-code">SUMMER30</div>
+                            <div class="coupon-desc">خصم 30% عروض الصيف على الأزياء</div>
+                            <div class="coupon-exp"><i class="far fa-clock"></i> صالح حتى 30 سبتمبر 2024</div>
+                        </div>
+                        <button class="btn btn-outline copy-btn" onclick="copyCode('SUMMER30', this)"><i class="fas fa-copy"></i> نسخ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tab -->
+            <div class="tab-content" id="tab-security">
+                <div class="account-card">
+                    <h3><i class="fas fa-lock"></i> الأمان وكلمة المرور</h3>
+                    <div class="profile-form">
+                        <div class="form-group"><label>كلمة المرور الحالية</label><input type="password" placeholder="••••••••"></div>
+                        <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" placeholder="••••••••"></div>
+                        <div class="form-group"><label>تأكيد كلمة المرور الجديدة</label><input type="password" placeholder="••••••••"></div>
+                        <button class="btn btn-orange" onclick="showToast('تم تغيير كلمة المرور بنجاح ✅')"><i class="fas fa-lock"></i> تغيير كلمة المرور</button>
+                    </div>
+                </div>
+                <div class="account-card">
+                    <h3><i class="fas fa-shield-alt"></i> إعدادات الأمان</h3>
+                    <div style="display:flex;flex-direction:column;gap:15px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+                            <div><div style="font-weight:700;font-size:14px;">التحقق بخطوتين</div><div style="font-size:12px;color:var(--muted);">حمي حسابك بطبقة حماية إضافية</div></div>
+                            <label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" style="opacity:0;width:0;height:0;"><span style="position:absolute;inset:0;background:#ccc;border-radius:24px;cursor:pointer;transition:.3s;"></span></label>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;">
+                            <div><div style="font-weight:700;font-size:14px;">إشعارات تسجيل الدخول</div><div style="font-size:12px;color:var(--muted);">اعرف لما حد يدخل على حسابك</div></div>
+                            <label style="position:relative;display:inline-block;width:44px;height:24px;"><input type="checkbox" checked style="opacity:0;width:0;height:0;"><span style="position:absolute;inset:0;background:var(--primary);border-radius:24px;cursor:pointer;transition:.3s;"></span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="main-footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 جوميا مصر</p><div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div></div></div></footer>
+
+<script src="script.js?v=1779253392"></script>
+<script>
+// Load user data into form
+const user = JSON.parse(localStorage.getItem('jumia-user') || 'null');
+if (!user) { window.location.href = 'login.html'; }
+
+if (user) {
+    document.getElementById('user-full-name').textContent = `${user.firstName} ${user.lastName || ''}`;
+    document.getElementById('user-email-display').textContent = user.email || '';
+    document.getElementById('avatar-icon').textContent = user.firstName?.charAt(0)?.toUpperCase() || '?';
+    document.getElementById('avatar-icon').style.fontSize = '32px';
+    document.getElementById('p-fname').value = user.firstName || '';
+    document.getElementById('p-lname').value = user.lastName || '';
+    document.getElementById('p-email').value = user.email || '';
+    document.getElementById('p-phone').value = user.phone || '';
+    document.getElementById('p-gov').value = user.governorate || '';
+    document.getElementById('p-address').value = user.address || '';
+}
+
+// Update badges
+document.getElementById('wish-badge').textContent = wishlist.length;
+const orders = JSON.parse(localStorage.getItem('jumia-orders') || '[]');
+document.getElementById('orders-badge').textContent = orders.length;
+
+// Render orders
+function renderOrders() {
+    const container = document.getElementById('orders-container');
+    if (!orders.length) return;
+    const statusMap = [
+        { label: 'قيد المعالجة', cls: 'status-processing', step: 1 },
+        { label: 'جاري الشحن', cls: 'status-shipped', step: 2 },
+        { label: 'تم التسليم', cls: 'status-delivered', step: 4 },
+    ];
+    container.innerHTML = orders.map((order, i) => {
+        const st = statusMap[i % 3];
+        return `
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <span class="order-id">#${order.id}</span>
+                    <span class="order-date" style="margin-right:12px;">${order.date}</span>
+                </div>
+                <span class="order-status ${st.cls}">${st.label}</span>
+            </div>
+            <div class="order-body">
+                <div class="tracking-steps">
+                    <div class="track-step"><div class="track-dot done"><i class="fas fa-check"></i></div><div class="track-label done">تم الطلب</div></div>
+                    <div class="track-step"><div class="track-dot ${st.step >= 2 ? 'done' : 'active'}"><i class="fas fa-cog"></i></div><div class="track-label ${st.step >= 2 ? 'done' : 'active'}">قيد التجهيز</div></div>
+                    <div class="track-step"><div class="track-dot ${st.step >= 3 ? 'done' : st.step === 2 ? 'active' : ''}"><i class="fas fa-truck"></i></div><div class="track-label ${st.step >= 3 ? 'done' : st.step === 2 ? 'active' : ''}">في الطريق</div></div>
+                    <div class="track-step"><div class="track-dot ${st.step >= 4 ? 'done' : ''}"><i class="fas fa-home"></i></div><div class="track-label ${st.step >= 4 ? 'done' : ''}">تم التسليم</div></div>
+                </div>
+                ${order.items.map(it => `
+                    <div class="order-item-row">
+                        <img src="${it.img || 'https://placehold.co/50x50'}" class="order-item-img" alt="${it.name}" onerror="this.src='https://placehold.co/50x50/f5f5f5/999?text=Item'">
+                        <div style="flex:1;font-size:13px;font-weight:600;">${it.name}</div>
+                        <div style="font-weight:700;font-size:13px;white-space:nowrap;">×${it.qty} — EGP ${(it.price*it.qty).toLocaleString()}</div>
+                    </div>`).join('')}
+            </div>
+            <div class="order-footer">
+                <span style="font-size:13px;color:var(--muted);">طريقة الدفع: ${order.payment}</span>
+                <span class="order-total">EGP ${order.total.toLocaleString()}</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+renderOrders();
+
+// Tab switching
+function switchTab(tab, el) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.account-nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    el.classList.add('active');
+    if (tab === 'wishlist') renderWishlist();
+}
+
+// Save profile
+function saveProfile() {
+    const updated = {
+        ...user,
+        firstName: document.getElementById('p-fname').value,
+        lastName: document.getElementById('p-lname').value,
+        email: document.getElementById('p-email').value,
+        phone: document.getElementById('p-phone').value,
+        governorate: document.getElementById('p-gov').value,
+        address: document.getElementById('p-address').value,
+    };
+    localStorage.setItem('jumia-user', JSON.stringify(updated));
+    document.getElementById('user-full-name').textContent = `${updated.firstName} ${updated.lastName}`;
+    showToast('تم حفظ بياناتك بنجاح ✅');
+}
+
+// Copy coupon
+function copyCode(code, btn) {
+    navigator.clipboard?.writeText(code).catch(() => {});
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+    btn.style.background = 'var(--primary)';
+    btn.style.color = 'white';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.style.color = ''; }, 2000);
+    showToast(`✅ تم نسخ الكوبون: ${code}`);
+}
+</script>
+</body></html>
