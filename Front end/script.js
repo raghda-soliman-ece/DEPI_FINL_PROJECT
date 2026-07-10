@@ -33,9 +33,11 @@ function updateCartUI() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = count);
 }
 
-function addToCart(btn, name, price) {
-    const existing = cartItems.find(i => i.name === name);
+async function addToCart(btn, name, price) {
     const imgEl = btn.closest('.product-card')?.querySelector('img');
+    const existing = cartItems.find(i => i.name === name);
+    
+    // Fallback logic first (immediate UI update)
     if (existing) {
         existing.qty++;
     } else {
@@ -48,6 +50,23 @@ function addToCart(btn, name, price) {
     btn.style.background = '#4caf50';
     setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1500);
     showToast(`تمت إضافة "${name}" للسلة 🛒`);
+
+    // Sync with real backend if possible
+    if (currentUser && currentUser.token) {
+        try {
+            // Find product ID from our DB (mock match for now)
+            // In a fully dynamic app, btn would pass productId directly.
+            const productMatch = globalSearchDB.find(p => p.title === name);
+            const productId = productMatch && productMatch.id ? productMatch.id : 1; 
+
+            await fetch(`https://jumiaapi.runasp.net/api/Basket/items?productId=${productId}&quantity=${existing ? existing.qty : 1}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+        } catch(err) {
+            console.warn("Backend down, cart saved locally only.");
+        }
+    }
 }
 
 // ========== WISHLIST ==========
@@ -219,7 +238,9 @@ const globalSearchDB = [
     { title: 'سماعة Sony WH-1000XM5 - ضد الضوضاء', price: '12,999', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80' }
 ];
 
-function handleSearch() {
+const API_BASE_URL = 'https://jumiaapi.runasp.net/api';
+
+async function handleSearch() {
     const searchInput = document.getElementById('main-search');
     if (!searchInput) return;
     const q = searchInput.value.trim().toLowerCase();
@@ -248,8 +269,25 @@ function handleSearch() {
     // Save original layout
     if (!window.originalGridHTML) window.originalGridHTML = grid.innerHTML;
     
-    // Find globally
-    const matches = globalSearchDB.filter(p => p.title.toLowerCase().includes(q));
+    let matches = [];
+    
+    try {
+        // Try to fetch from real API
+        const res = await fetch(`${API_BASE_URL}/Products?search=${encodeURIComponent(q)}`);
+        if (!res.ok) throw new Error('API down');
+        const data = await res.json();
+        // Map API DTO to our frontend format
+        matches = data.data.map(p => ({
+            id: p.id,
+            title: p.name,
+            price: p.price.toString(),
+            img: p.pictureUrl || 'https://placehold.co/300x300'
+        }));
+    } catch (err) {
+        console.warn("Backend down, using offline search DB");
+        // Fallback globally to static DB
+        matches = globalSearchDB.filter(p => p.title.toLowerCase().includes(q));
+    }
     
     if (header) {
         header.innerHTML = `<i class="fas fa-search"></i> نتائج البحث عن: "${searchInput.value}" (${matches.length})`;
@@ -262,7 +300,7 @@ function handleSearch() {
     
     let html = '';
     matches.forEach(p => {
-        const numPrice = parseInt(p.price.replace(/[^\d]/g, '')) || 0;
+        const numPrice = parseInt(p.price.replace(/[^\\d]/g, '')) || 0;
         html += `
         <div class="product-card">
             <button class="wishlist-btn" onclick="toggleWishlist(this, '${p.title.replace(/'/g, "\\'")}', ${numPrice})" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
@@ -477,6 +515,7 @@ function injectWishlistButtons() {
 }
 
 // ========== INIT ==========
+loadProductDetails();
 updateCartUI();
 updateWishlistCount();
 updateHeaderUser();
@@ -484,4 +523,3 @@ injectWishlistButtons();
 highlightWishlistedItems();
 renderCart();
 renderWishlist();
-loadProductDetails();

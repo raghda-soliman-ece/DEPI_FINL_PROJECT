@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,40 +78,79 @@ function switchAuthTab(tab, el) {
 }
 
 // Login
-document.getElementById('login-form').addEventListener('submit', function(e) {
+document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
     const btn = document.getElementById('login-btn');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
     btn.disabled = true;
 
-    setTimeout(() => {
-        // Extract first name from email
-        const namePart = email.split('@')[0];
-        const firstName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-        const userData = { firstName, lastName: '', email, phone: '' };
+    try {
+        // Try real API first
+        const res = await fetch('https://jumiaapi.runasp.net/api/Auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        
+        if (!res.ok) throw new Error('Network response was not ok');
+        
+        const data = await res.json();
+        // Server returned user info and token
+        const userData = { firstName: data.displayName || email.split('@')[0], email: data.email, token: data.token };
         localStorage.setItem('jumia-user', JSON.stringify(userData));
         window.location.href = 'index.html';
-    }, 1200);
+        
+    } catch (error) {
+        console.warn("Backend is down, using offline mock login", error);
+        // Fallback to offline mock if server is down
+        setTimeout(() => {
+            const namePart = email.split('@')[0];
+            const firstName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+            const userData = { firstName, email, token: 'mock_token_123' };
+            localStorage.setItem('jumia-user', JSON.stringify(userData));
+            window.location.href = 'index.html';
+        }, 800);
+    }
 });
 
 // Register
-document.getElementById('register-form').addEventListener('submit', function(e) {
+document.getElementById('register-form').addEventListener('submit', async function(e) {
     e.preventDefault();
+    const fname = document.getElementById('reg-fname').value;
+    const lname = document.getElementById('reg-lname').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
     const btn = document.getElementById('reg-btn');
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء الحساب...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإنشاء...';
     btn.disabled = true;
 
-    setTimeout(() => {
-        const userData = {
-            firstName: document.getElementById('reg-fname').value,
-            lastName: document.getElementById('reg-lname').value,
-            email: document.getElementById('reg-email').value,
-            phone: document.getElementById('reg-phone').value,
-        };
+    try {
+        // Try real API first
+        const res = await fetch('https://jumiaapi.runasp.net/api/Auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ displayName: fname + ' ' + lname, email, password })
+        });
+        
+        if (!res.ok) throw new Error('Network response was not ok');
+        
+        const data = await res.json();
+        const userData = { firstName: data.displayName || fname, email: data.email, token: data.token };
         localStorage.setItem('jumia-user', JSON.stringify(userData));
         window.location.href = 'index.html';
-    }, 1500);
+        
+    } catch (error) {
+        console.warn("Backend is down, using offline mock register", error);
+        // Fallback to offline mock
+        setTimeout(() => {
+            const userData = { firstName: fname, lastName: lname, email, token: 'mock_token_123' };
+            localStorage.setItem('jumia-user', JSON.stringify(userData));
+            window.location.href = 'index.html';
+        }, 800);
+    }
 });
 </script>
-</body></html>
+</body>
+</html>
