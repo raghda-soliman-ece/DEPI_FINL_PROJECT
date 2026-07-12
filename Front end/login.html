@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -87,31 +87,30 @@ document.getElementById('login-form').addEventListener('submit', async function(
     btn.disabled = true;
 
     try {
-        // Try real API first
-        const res = await fetch('https://jumiaapi.runasp.net/api/Auth/login', {
+        const res = await fetch('http://jumiaapi.runasp.net/api/Auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
         
-        if (!res.ok) throw new Error('Network response was not ok');
+        if (!res.ok) {
+            let errorMsg = 'خطأ في البريد الإلكتروني أو كلمة المرور';
+            try {
+                const errData = await res.json();
+                if (errData.message) errorMsg = errData.message;
+            } catch(e) {}
+            throw new Error(errorMsg);
+        }
         
         const data = await res.json();
-        // Server returned user info and token
         const userData = { firstName: data.displayName || email.split('@')[0], email: data.email, token: data.token };
         localStorage.setItem('jumia-user', JSON.stringify(userData));
         window.location.href = 'index.html';
         
     } catch (error) {
-        console.warn("Backend is down, using offline mock login", error);
-        // Fallback to offline mock if server is down
-        setTimeout(() => {
-            const namePart = email.split('@')[0];
-            const firstName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
-            const userData = { firstName, email, token: 'mock_token_123' };
-            localStorage.setItem('jumia-user', JSON.stringify(userData));
-            window.location.href = 'index.html';
-        }, 800);
+        alert(error.message);
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+        btn.disabled = false;
     }
 });
 
@@ -127,14 +126,26 @@ document.getElementById('register-form').addEventListener('submit', async functi
     btn.disabled = true;
 
     try {
-        // Try real API first
-        const res = await fetch('https://jumiaapi.runasp.net/api/Auth/register', {
+        const res = await fetch('http://jumiaapi.runasp.net/api/Auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ displayName: fname + ' ' + lname, email, password })
         });
         
-        if (!res.ok) throw new Error('Network response was not ok');
+        if (!res.ok) {
+            let errorMsg = 'حدث خطأ أثناء إنشاء الحساب، تأكد من البيانات أو قد يكون البريد مستخدم مسبقاً.';
+            try {
+                const errData = await res.json();
+                if (errData.errors && Array.isArray(errData.errors)) {
+                    errorMsg = errData.errors.join('\\n');
+                } else if (errData.message) {
+                    errorMsg = errData.message;
+                } else if (errData.errors && typeof errData.errors === 'object') {
+                    errorMsg = Object.values(errData.errors).flat().join('\\n');
+                }
+            } catch(e) {}
+            throw new Error(errorMsg);
+        }
         
         const data = await res.json();
         const userData = { firstName: data.displayName || fname, email: data.email, token: data.token };
@@ -142,13 +153,9 @@ document.getElementById('register-form').addEventListener('submit', async functi
         window.location.href = 'index.html';
         
     } catch (error) {
-        console.warn("Backend is down, using offline mock register", error);
-        // Fallback to offline mock
-        setTimeout(() => {
-            const userData = { firstName: fname, lastName: lname, email, token: 'mock_token_123' };
-            localStorage.setItem('jumia-user', JSON.stringify(userData));
-            window.location.href = 'index.html';
-        }, 800);
+        alert(error.message);
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء الحساب';
+        btn.disabled = false;
     }
 });
 </script>

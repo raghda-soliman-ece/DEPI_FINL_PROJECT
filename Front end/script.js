@@ -33,38 +33,43 @@ function updateCartUI() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = count);
 }
 
-async function addToCart(btn, name, price) {
+async function addToCart(btn, name, price, forceId = null) {
     const imgEl = btn.closest('.product-card')?.querySelector('img');
     const existing = cartItems.find(i => i.name === name);
     
-    // Fallback logic first (immediate UI update)
+    // Immediate UI update
     if (existing) {
         existing.qty++;
     } else {
-        cartItems.push({ name, price, qty: 1, img: imgEl?.src || '' });
+        cartItems.push({ name, price, qty: 1, img: imgEl?.src || '', productId: forceId });
     }
     localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
     updateCartUI();
+    
     const orig = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check"></i> تم الإضافة!';
     btn.style.background = '#4caf50';
     setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1500);
     showToast(`تمت إضافة "${name}" للسلة 🛒`);
 
-    // Sync with real backend if possible
     if (currentUser && currentUser.token) {
         try {
-            // Find product ID from our DB (mock match for now)
-            // In a fully dynamic app, btn would pass productId directly.
-            const productMatch = globalSearchDB.find(p => p.title === name);
-            const productId = productMatch && productMatch.id ? productMatch.id : 1; 
-
-            await fetch(`https://jumiaapi.runasp.net/api/Basket/items?productId=${productId}&quantity=${existing ? existing.qty : 1}`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${currentUser.token}` }
-            });
+            let pId = forceId;
+            if (!pId) {
+                // If ID is missing, try to find it via search API
+                const sRes = await fetch(`${API_BASE_URL}/Products?search=${encodeURIComponent(name)}`);
+                const sData = await sRes.json();
+                const matched = (sData.data || sData || []).find(p => p.name === name);
+                if (matched) pId = matched.id;
+            }
+            if (pId) {
+                await fetch(`${API_BASE_URL}/Basket/items?productId=${pId}&quantity=1`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+            }
         } catch(err) {
-            console.warn("Backend down, cart saved locally only.");
+            console.error("Failed to sync cart item to backend.", err);
         }
     }
 }
@@ -72,19 +77,34 @@ async function addToCart(btn, name, price) {
 // ========== WISHLIST ==========
 let wishlist = JSON.parse(localStorage.getItem('jumia-wishlist') || '[]');
 
-function toggleWishlist(btn, name, price) {
+function toggleWishlist(btn, name, price, forceId = null) {
     const imgEl = btn.closest('.product-card')?.querySelector('img');
     const idx = wishlist.findIndex(i => i.name === name);
     if (idx === -1) {
-        wishlist.push({ name, price, img: imgEl?.src || '' });
+        wishlist.push({ name, price, img: imgEl?.src || '', productId: forceId });
         btn.classList.add('wishlisted');
         btn.innerHTML = '<i class="fas fa-heart"></i>';
         showToast(`تمت الإضافة للمفضلة ❤️`);
+        
+        if (currentUser && currentUser.token && forceId) {
+            fetch(`${API_BASE_URL}/Wishlist/${forceId}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            }).catch(e => console.error(e));
+        }
     } else {
-        wishlist.splice(idx, 1);
+        const removedItem = wishlist.splice(idx, 1)[0];
         btn.classList.remove('wishlisted');
         btn.innerHTML = '<i class="far fa-heart"></i>';
         showToast(`تمت الإزالة من المفضلة`);
+        
+        const pId = removedItem.productId || forceId;
+        if (currentUser && currentUser.token && pId) {
+            fetch(`${API_BASE_URL}/Wishlist/${pId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            }).catch(e => console.error(e));
+        }
     }
     localStorage.setItem('jumia-wishlist', JSON.stringify(wishlist));
     updateWishlistCount();
@@ -172,73 +192,76 @@ function renderCart() {
         </div>`).join('');
 }
 
-function changeQty(idx, delta) {
-    cartItems[idx].qty += delta;
-    if (cartItems[idx].qty <= 0) cartItems.splice(idx, 1);
+async function changeQty(idx, delta) {
+    const item = cartItems[idx];
+    item.qty += delta;
+    
+    if (item.qty <= 0) {
+        return removeItem(idx);
+    }
+    
     localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
     renderCart(); updateCartUI();
+    
+    if (currentUser && currentUser.token && item.productId) {
+        try {
+            // Delete and re-add to ensure exact quantity since we don't have a PUT or PATCH
+            await fetch(`${API_BASE_URL}/Basket/items/${item.productId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+            await fetch(`${API_BASE_URL}/Basket/items?productId=${item.productId}&quantity=${item.qty}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+        } catch(err) {
+            console.error('Failed to sync qty to backend');
+        }
+    }
 }
 
-function removeItem(idx) {
+async function removeItem(idx) {
+    const item = cartItems[idx];
     cartItems.splice(idx, 1);
     localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
     renderCart(); updateCartUI();
+    
+    if (currentUser && currentUser.token && item.productId) {
+        try {
+            await fetch(`${API_BASE_URL}/Basket/items/${item.productId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+        } catch(err) {
+            console.error('Failed to remove item from backend');
+        }
+    }
 }
 
-function moveToWishlist(idx) {
+async function moveToWishlist(idx) {
     const item = cartItems[idx];
     if (!wishlist.find(w => w.name === item.name)) {
-        wishlist.push({ name: item.name, price: item.price, img: item.img });
+        wishlist.push({ name: item.name, price: item.price, img: item.img, productId: item.productId });
         localStorage.setItem('jumia-wishlist', JSON.stringify(wishlist));
         updateWishlistCount();
+        
+        if (currentUser && currentUser.token && item.productId) {
+            try {
+                await fetch(`${API_BASE_URL}/Wishlist/${item.productId}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${currentUser.token}` }
+                });
+            } catch(err) {}
+        }
     }
-    cartItems.splice(idx, 1);
-    localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
-    renderCart(); updateCartUI();
+    await removeItem(idx);
     showToast('تم نقل المنتج للمفضلة ❤️');
 }
 
 // ========== SEARCH ==========
-const globalSearchDB = [
-    { title: 'زيت زيتون Colavita خالص 750 مل', price: '189', img: 'images/oil.jpg' },
-    { title: 'لبن Baraka كامل الدسم 1 لتر × 6', price: '155', img: 'images/baraka.jpg' },
-    { title: 'شوكولاتة Ferrero Rocher 30 حبة', price: '299', img: 'images/ferrero.jpg' },
-    { title: 'مسحوق غسيل Ariel 5 كيلو', price: '279', img: 'images/ariel.jpg' },
-    { title: 'قهوة Nescafé Classic 200 جرام', price: '149', img: 'images/nescafe.jpg' },
-    { title: 'مياه Nestle Pure Life 1.5 لتر × 12', price: '89', img: 'images/water.jpg' },
-    { title: 'سامسونج جالاكسي S24 - 256 جيجا', price: '32,999', img: 'https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=300&q=80' },
-    { title: 'أبل آيفون 15 - 128 جيجا', price: '45,999', img: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=300&q=80' },
-    { title: 'سامسونج جالاكسي A54 - 128 جيجا', price: '15,499', img: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=300&q=80' },
-    { title: 'شاومي 14 Pro - 512 جيجا', price: '28,500', img: 'images/redmi.jpg' },
-    { title: 'أوبو A78 - 256 جيجا، 8 رام', price: '10,999', img: 'https://images.unsplash.com/photo-1585060544812-6b45742d762f?auto=format&fit=crop&w=300&q=80' },
-    { title: 'سامسونج جالاكسي تاب A8 - 64 جيجا', price: '11,999', img: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=300&q=80' },
-    { title: 'مجموعة LEGO City 300 قطعة - سيارات', price: '1,299', img: 'images/lego.jpg' },
-    { title: 'عروسة Barbie Fashionista مع ملحقات', price: '599', img: 'images/barbie.jpg' },
-    { title: 'روبوت ذكاء اصطناعي تعليمي للأطفال', price: '2,199', img: 'images/robot.jpg' },
-    { title: 'دراجة هوائية للأطفال 16 بوصة', price: '1,499', img: 'images/bike.jpg' },
-    { title: 'طقم رسم وتلوين احترافي للأطفال 48 قلم', price: '399', img: 'images/colors.jpg' },
-    { title: 'حوض سباحة منزلي للأطفال 300×180 سم', price: '899', img: 'images/pool.jpg' },
-    { title: 'ثلاجة توشيبا 20 قدم نوفروست - ستانلس', price: '22,500', img: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=300&q=80' },
-    { title: 'غسالة LG ذات حوضين 12 كيلو - أبيض', price: '14,999', img: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=300&q=80' },
-    { title: 'مكيف يونيون اير سبليت 1.5 حصان بارد', price: '13,500', img: 'images/ac.jpg' },
-    { title: 'قلاية هوائية فيليبس XL - 6.2 لتر', price: '6,499', img: 'images/airfryer.jpg' },
-    { title: 'طقم حلل جرانيت سافلون 9 قطع', price: '4,200', img: 'images/pots.jpg' },
-    { title: 'مكنسة كهربائية Dyson V12 - لاسلكية', price: '18,999', img: 'images/vacuum.jpg' },
-    { title: 'حذاء ركض Adidas Ultraboost - أسود', price: '5,200', img: 'images/shoes.jpg' },
-    { title: 'تيشيرت رجالي Nike قطن 100% - أبيض', price: '599', img: 'images/tshirt.jpg' },
-    { title: 'شنطة يد حريمي جلد طبيعي - بني', price: '2,999', img: 'images/bag.jpg' },
-    { title: 'بنطلون جينز Levi\'s 501 - أزرق', price: '1,899', img: 'images/jeans.jpg' },
-    { title: 'فستان سهرة حريمي - أحمر فاقع', price: '1,499', img: 'images/dress.jpg' },
-    { title: 'ساعة Casio G-Shock رجالي - أسود', price: '3,200', img: 'images/watch.jpg' },
-    { title: 'تلفزيون سامسونج QLED 55 بوصة 4K', price: '28,999', img: 'https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=300&q=80' },
-    { title: 'سماعات Apple AirPods Pro الجيل الثاني', price: '8,999', img: 'images/airpods.jpg' },
-    { title: 'لاب توب لينوفو ايديا باد 3 - Intel i5', price: '22,999', img: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=300&q=80' },
-    { title: 'كاميرا Canon EOS R50 - 24 ميجابكسل', price: '19,500', img: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=300&q=80' },
-    { title: 'PlayStation 5 - 1TB SSD', price: '24,999', img: 'images/ps5.jpg' },
-    { title: 'سماعة Sony WH-1000XM5 - ضد الضوضاء', price: '12,999', img: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80' }
-];
+// globalSearchDB removed in favor of API
 
-const API_BASE_URL = 'https://jumiaapi.runasp.net/api';
+const API_BASE_URL = 'http://jumiaapi.runasp.net/api';
 
 async function handleSearch() {
     const searchInput = document.getElementById('main-search');
@@ -272,21 +295,19 @@ async function handleSearch() {
     let matches = [];
     
     try {
-        // Try to fetch from real API
         const res = await fetch(`${API_BASE_URL}/Products?search=${encodeURIComponent(q)}`);
         if (!res.ok) throw new Error('API down');
-        const data = await res.json();
-        // Map API DTO to our frontend format
-        matches = data.data.map(p => ({
+        let data = await res.json();
+        if (data && data.data) data = data.data; // Handle pagination wrapper if any
+        matches = data.map(p => ({
             id: p.id,
             title: p.name,
             price: p.price.toString(),
             img: p.pictureUrl || 'https://placehold.co/300x300'
         }));
     } catch (err) {
-        console.warn("Backend down, using offline search DB");
-        // Fallback globally to static DB
-        matches = globalSearchDB.filter(p => p.title.toLowerCase().includes(q));
+        console.warn("Search failed", err);
+        matches = [];
     }
     
     if (header) {
@@ -429,21 +450,27 @@ function renderWishlist() {
         </div>`).join('');
 }
 
-function addWishToCart(idx) {
+async function addWishToCart(idx) {
     const item = wishlist[idx];
-    const existing = cartItems.find(i => i.name === item.name);
-    if (existing) existing.qty++;
-    else cartItems.push({ name: item.name, price: item.price, qty: 1, img: item.img });
-    localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
-    updateCartUI();
-    showToast(`تمت الإضافة للسلة 🛒`);
+    const dummyBtn = document.createElement('button');
+    await addToCart(dummyBtn, item.name, item.price, item.productId);
 }
 
-function removeWish(idx) {
+async function removeWish(idx) {
+    const item = wishlist[idx];
     wishlist.splice(idx, 1);
     localStorage.setItem('jumia-wishlist', JSON.stringify(wishlist));
     renderWishlist();
     updateWishlistCount();
+    
+    if (currentUser && currentUser.token && item.productId) {
+        try {
+            await fetch(`${API_BASE_URL}/Wishlist/${item.productId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+        } catch(err) {}
+    }
 }
 
 // ========== DYNAMIC PRODUCT DETAILS ==========
@@ -514,7 +541,106 @@ function injectWishlistButtons() {
     });
 }
 
+// ========== DYNAMIC API FUNCTIONS ==========
+async function loadFeaturedProducts() {
+    // Only run on the home page
+    const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('/') || !window.location.pathname.includes('.html');
+    if (!isHomePage) return;
+
+    const grid = document.querySelector('.products-section .product-grid');
+    if (!grid) return;
+    
+    try {
+        const res = await fetch(`${API_BASE_URL}/Products?pageSize=6`);
+        if (!res.ok) throw new Error('API down');
+        let data = await res.json();
+        const products = Array.isArray(data) ? data : (data.data || []);
+        
+        if (products.length > 0) {
+            let html = '';
+            products.forEach(p => {
+                html += `
+                <div class="product-card">
+                    <button class="wishlist-btn" onclick="toggleWishlist(this, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.id})" title="أضف للمفضلة"><i class="far fa-heart"></i></button>
+                    <a href="product-details.html">
+                        <div class="product-img-wrap">
+                            <img src="${p.pictureUrl || 'https://placehold.co/300x300'}" class="product-image" alt="Product">
+                        </div>
+                        <div class="product-info">
+                            <h3>${p.name}</h3>
+                            <div class="product-price">EGP ${p.price.toLocaleString()}</div>
+                            ${p.oldPrice ? `<div class="price-row"><span class="product-old-price">${p.oldPrice.toLocaleString()} EGP</span></div>` : ''}
+                            <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                        </div>
+                    </a>
+                    <button class="btn btn-orange" onclick="addToCart(this, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.id})" style="margin:8px; width:calc(100% - 16px); justify-content:center;"><i class="fas fa-shopping-cart"></i> اضف للسلة</button>
+                </div>`;
+            });
+            grid.innerHTML = html;
+            window.originalGridHTML = grid.innerHTML;
+            highlightWishlistedItems();
+        }
+    } catch(err) {
+        console.error("Failed to load featured products", err);
+    }
+}
+
+async function loadCartFromBackend() {
+    if (currentUser && currentUser.token) {
+        try {
+            const res = await fetch(`${API_BASE_URL}/Basket`, {
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.items) {
+                    cartItems = data.items.map(i => ({
+                        name: i.productName,
+                        price: i.productPrice,
+                        qty: i.quantity,
+                        img: i.productPictureUrl || 'https://placehold.co/90x90',
+                        productId: i.productId
+                    }));
+                    localStorage.setItem('jumia-cart', JSON.stringify(cartItems));
+                    updateCartUI();
+                    renderCart();
+                }
+            }
+        } catch(err) {
+            console.error('Failed to load cart from backend');
+        }
+    }
+}
+
+async function loadWishlistFromBackend() {
+    if (currentUser && currentUser.token) {
+        try {
+            const res = await fetch(`${API_BASE_URL}/Wishlist`, {
+                headers: { 'Authorization': `Bearer ${currentUser.token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                wishlist = data.map(i => ({
+                    name: i.productName,
+                    price: i.productPrice,
+                    img: i.productPictureUrl || 'https://placehold.co/300x300',
+                    productId: i.productId
+                }));
+                localStorage.setItem('jumia-wishlist', JSON.stringify(wishlist));
+                updateWishlistCount();
+                renderWishlist();
+                highlightWishlistedItems();
+            }
+        } catch(err) {
+            console.error('Failed to load wishlist from backend');
+        }
+    }
+}
+
 // ========== INIT ==========
+loadFeaturedProducts();
+loadCartFromBackend();
+loadWishlistFromBackend();
 loadProductDetails();
 updateCartUI();
 updateWishlistCount();

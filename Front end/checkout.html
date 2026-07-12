@@ -193,7 +193,7 @@
     </div>
 </div>
 
-<script src="script.js?v=1779253392"></script>
+<script src="script.js?v=1783723866"></script>
 <script>
 function selectPayment(el) {
     document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
@@ -217,7 +217,7 @@ function renderCheckoutItems() {
         </div>`).join('');
 }
 
-function placeOrder() {
+async function placeOrder() {
     const required = ['first-name','last-name','phone','governorate','address'];
     let valid = true;
     required.forEach(id => {
@@ -227,7 +227,6 @@ function placeOrder() {
     });
     if (!valid) { alert('من فضلك أكمل بيانات الشحن كلها!'); return; }
 
-    const orderNum = Math.floor(Math.random() * 90000 + 10000);
     const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
     const payLabels = { cod: 'الدفع عند الاستلام', card: 'بطاقة بنكية', vodafone: 'فودافون كاش', instapay: 'InstaPay' };
     const subtotal = cartItems.reduce((s,i) => s + i.price * i.qty, 0);
@@ -236,6 +235,53 @@ function placeOrder() {
         if (appliedCoupon.type === 'percent') discount = Math.round(subtotal * appliedCoupon.discount / 100);
         else discount = appliedCoupon.discount;
     }
+    
+    let orderNum = Math.floor(Math.random() * 90000 + 10000);
+
+    if (currentUser && currentUser.token) {
+        try {
+            // Get Basket ID
+            const bRes = await fetch(`${API_BASE_URL}/Basket`, { headers: { 'Authorization': `Bearer ${currentUser.token}` } });
+            let basketId = "default";
+            if (bRes.ok) {
+                const bData = await bRes.json();
+                basketId = bData.id;
+            }
+            
+            const reqBody = {
+                basketId: basketId,
+                deliveryMethodId: 1, // Default delivery method
+                shipToAddress: {
+                    firstName: document.getElementById('first-name').value,
+                    lastName: document.getElementById('last-name').value,
+                    street: document.getElementById('address').value,
+                    city: document.getElementById('area').value || document.getElementById('governorate').value,
+                    state: document.getElementById('governorate').value,
+                    zipCode: "12345"
+                }
+            };
+            
+            const oRes = await fetch(`${API_BASE_URL}/Orders`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser.token}` 
+                },
+                body: JSON.stringify(reqBody)
+            });
+            
+            if (oRes.ok) {
+                const orderResp = await oRes.json();
+                orderNum = orderResp.id || orderNum; // Use API order ID if available
+                
+                // Clear basket on backend
+                await fetch(`${API_BASE_URL}/Basket?id=${basketId}`, { method: 'DELETE' });
+            }
+        } catch(e) {
+            console.error("Order API failed, saving locally only.", e);
+        }
+    }
+
     const orderData = {
         id: 'JM-' + orderNum,
         date: new Date().toLocaleDateString('ar-EG'),
@@ -244,6 +290,7 @@ function placeOrder() {
         payment: payLabels[paymentMethod],
         address: document.getElementById('address').value,
     };
+    
     const orders = JSON.parse(localStorage.getItem('jumia-orders') || '[]');
     orders.unshift(orderData);
     localStorage.setItem('jumia-orders', JSON.stringify(orders));
