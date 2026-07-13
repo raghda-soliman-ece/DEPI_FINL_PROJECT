@@ -26,6 +26,7 @@ namespace Jumia.Jumia.Infrastructure
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<WishlistItem> WishlistItems { get; set; }
+        public DbSet<TwoFactorCode> TwoFactorCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -280,6 +281,21 @@ namespace Jumia.Jumia.Infrastructure
                 entity.HasOne(e => e.Product)
                     .WithMany(p => p.WishlistItems)
                     .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // TwoFactorCodes config
+            modelBuilder.Entity<TwoFactorCode>(entity =>
+            {
+                entity.ToTable("TwoFactorCodes");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Code).HasMaxLength(6).IsRequired();
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
