@@ -1,6 +1,0 @@
-@Jumia_HostAddress = http://localhost:5208
-
-GET {{Jumia_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
