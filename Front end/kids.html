@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ألعاب الأطفال | جوميا مصر</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><div class="top-bar-links"><a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a><a href="#"><i class="fas fa-truck"></i> تتبع الطلبات</a></div><div class="top-bar-promo"><i class="fas fa-tag"></i> توصيل مجاني لطلبك الأول!</div></div></div>
+<header class="main-header"><div class="container header-inner"><div class="logo"><a href="index.html"><span class="logo-text">jumia</span></a></div><div class="search-container"><div class="search-form"><input type="text" id="main-search" placeholder="ابحث عن ألعاب ومنتجات أطفال..."><button class="btn btn-orange" onclick="handleSearch()">بحث</button></div></div><div class="user-actions"><a href="login.html" class="action-link login-link" id="login-header-link"><i class="far fa-user"></i><span>تسجيل الدخول</span></a><a href="account.html" class="action-link" id="wishlist-header-link"><div class="cart-icon-wrapper"><i class="far fa-heart"></i><span class="wishlist-count">0</span></div><span>مفضلتي</span></a><a href="cart.html" class="action-link"><div class="cart-icon-wrapper"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>السلة</span></a></div></div></header>
+<nav class="main-nav"><div class="container"><ul class="nav-list"><li><a href="index.html" class="nav-item">الرئيسية</a></li><li><a href="mobiles.html" class="nav-item">موبايلات</a></li><li><a href="electronics.html" class="nav-item">إلكترونيات</a></li><li><a href="home-appliances.html" class="nav-item">أجهزة منزلية</a></li><li><a href="fashion.html" class="nav-item">أزياء</a></li><li><a href="supermarket.html" class="nav-item">سوبر ماركت</a></li><li><a href="kids.html" class="nav-item active">ألعاب أطفال</a></li></ul></div></nav>
+
+<main class="container">
+    <div class="breadcrumb"><a href="index.html">الرئيسية</a><span>›</span> ألعاب الأطفال</div>
+    <div class="page-banner" style="background: linear-gradient(135deg, #f7971e, #ffd200);">
+        <h1><i class="fas fa-gamepad"></i> ألعاب وترفيه الأطفال</h1>
+        <p>أفضل الألعاب التعليمية والترفيهية لأطفالك</p>
+    </div>
+
+    <section class="products-section">
+        <div class="section-header"><h2><i class="fas fa-gamepad"></i> ألعاب الأطفال</h2><a href="#" class="view-all">عرض الكل <i class="fas fa-chevron-left"></i></a></div>
+        <div class="product-grid">
+            <div class="product-card"><a href="product-details.html"><span class="product-badge">الأكثر مبيعاً</span><div class="product-img-wrap"><img src="images/lego.jpg" class="product-image" alt="Lego" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=LEGO'"></div><div class="product-info"><h3>مجموعة LEGO City 300 قطعة - سيارات</h3><div class="product-price">EGP 1,299</div><div class="price-row"><span class="product-old-price">1,500 EGP</span><span class="product-discount">-13%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>(890)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'LEGO City 300 قطعة', 1299)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge badge-blue">وصل حديثاً</span><div class="product-img-wrap"><img src="images/barbie.jpg" class="product-image" alt="Barbie" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Doll'"></div><div class="product-info"><h3>عروسة Barbie Fashionista مع ملحقات</h3><div class="product-price">EGP 599</div><div class="price-row"><span class="product-old-price">750 EGP</span><span class="product-discount">-20%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(420)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'Barbie Fashionista', 599)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><div class="product-img-wrap"><img src="images/robot.jpg" class="product-image" alt="Robot" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Robot'"></div><div class="product-info"><h3>روبوت ذكاء اصطناعي تعليمي للأطفال</h3><div class="product-price">EGP 2,199</div><div class="price-row"><span class="product-old-price">2,500 EGP</span><span class="product-discount">-12%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(145)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'روبوت تعليمي', 2199)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge badge-red">خصم 25%</span><div class="product-img-wrap"><img src="images/bike.jpg" class="product-image" alt="Bike" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Bike'"></div><div class="product-info"><h3>دراجة هوائية للأطفال 16 بوصة</h3><div class="product-price">EGP 1,499</div><div class="price-row"><span class="product-old-price">2,000 EGP</span><span class="product-discount">-25%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><span>(230)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'دراجة أطفال 16 بوصة', 1499)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><span class="product-badge">جوميا إكسبريس</span><div class="product-img-wrap"><img src="images/colors.jpg" class="product-image" alt="Art" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Art'"></div><div class="product-info"><h3>طقم رسم وتلوين احترافي للأطفال 48 قلم</h3><div class="product-price">EGP 399</div><div class="price-row"><span class="product-old-price">499 EGP</span><span class="product-discount">-20%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><span>(580)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'طقم رسم 48 قلم', 399)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+
+            <div class="product-card"><a href="product-details.html"><div class="product-img-wrap"><img src="images/pool.jpg" class="product-image" alt="Pool" onerror="this.src='https://placehold.co/300x300/f5f5f5/999?text=Pool'"></div><div class="product-info"><h3>حوض سباحة منزلي للأطفال 300×180 سم</h3><div class="product-price">EGP 899</div><div class="price-row"><span class="product-old-price">1,100 EGP</span><span class="product-discount">-18%</span></div><div class="product-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><span>(195)</span></div></div></a><button class="btn btn-orange" onclick="addToCart(this,'حوض سباحة أطفال', 899)"><i class="fas fa-shopping-cart"></i> اضف للسلة</button></div>
+        </div>
+    </section>
+</main>
+<footer class="main-footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 جوميا مصر</p><div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div></div></div></footer>
+<script src="config.js"></script>
+<script src="script.js?v=20260714"></script>
+</body></html>
