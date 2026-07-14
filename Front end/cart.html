@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة التسوق | جوميا مصر</title>
+    <link rel="stylesheet" href="style.css?v=chat1">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><div class="top-bar-links"><a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a><a href="#"><i class="fas fa-truck"></i> تتبع الطلبات</a></div><div class="top-bar-promo"><i class="fas fa-tag"></i> توصيل مجاني لطلبك الأول!</div></div></div>
+<header class="main-header"><div class="container header-inner"><div class="logo"><a href="index.html"><span class="logo-text">jumia</span></a></div><div class="search-container"><div class="search-form"><input type="text" id="main-search" placeholder="ابحث عن منتجات، فئات..."><button class="btn btn-orange" onclick="handleSearch()">بحث</button></div></div><div class="user-actions"><a href="login.html" class="action-link login-link" id="login-header-link"><i class="far fa-user"></i><span>تسجيل الدخول</span></a><a href="account.html" class="action-link" id="wishlist-header-link"><div class="cart-icon-wrapper"><i class="far fa-heart"></i><span class="wishlist-count">0</span></div><span>مفضلتي</span></a><a href="cart.html" class="action-link"><div class="cart-icon-wrapper"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>السلة</span></a></div></div></header>
+<nav class="main-nav"><div class="container"><ul class="nav-list"><li><a href="index.html" class="nav-item">الرئيسية</a></li><li><a href="mobiles.html" class="nav-item">موبايلات</a></li><li><a href="electronics.html" class="nav-item">إلكترونيات</a></li><li><a href="home-appliances.html" class="nav-item">أجهزة منزلية</a></li><li><a href="fashion.html" class="nav-item">أزياء</a></li><li><a href="supermarket.html" class="nav-item">سوبر ماركت</a></li><li><a href="kids.html" class="nav-item">ألعاب أطفال</a></li></ul></div></nav>
+
+<main class="container">
+    <h2 id="cart-heading" style="margin: 25px 0; font-size: 22px;">سلة التسوق</h2>
+    <div class="cart-grid">
+        <div class="cart-items-container" id="cart-items">
+            <!-- Rendered by script.js -->
+        </div>
+        <aside class="summary-card">
+            <h3>ملخص الطلب</h3>
+            <div class="summary-row"><span>الإجمالي الفرعي</span><span id="cart-subtotal">0 EGP</span></div>
+            <div class="summary-row"><span>مصاريف الشحن</span><span style="color:#4caf50;font-weight:700;">مجاناً <i class="fas fa-truck"></i></span></div>
+            <div class="summary-row"><span>الضريبة (14%)</span><span id="cart-tax">0 EGP</span></div>
+            <div class="summary-total"><span>الإجمالي النهائي</span><span id="cart-total">0 EGP</span></div>
+            <button class="btn btn-orange" onclick="window.location.href='checkout.html'">
+                <i class="fas fa-lock"></i> إتمام الشراء الآن
+            </button>
+            <a href="index.html" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:10px;">
+                <i class="fas fa-arrow-right"></i> متابعة التسوق
+            </a>
+        </aside>
+    </div>
+</main>
+
+<footer class="main-footer"><div class="container"><div class="footer-bottom"><p>&copy; 2024 جوميا مصر</p><div class="social-links"><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-instagram"></i></a></div></div></div></footer>
+<button type="button" id="jumia-chat-btn" title="مساعد جوميا" onclick="var p=document.getElementById('jumia-chat-panel'); if(p){p.classList.toggle('open');} else if(window.initJumiaChat){initJumiaChat(); document.getElementById('jumia-chat-panel').classList.add('open');}">💬</button>
+<script src="config.js"></script>
+<script src="script.js?v=20260714chat"></script>
+<script src="chat-widget.js?v=2"></script>
+<script>
+// Update tax display
+function updateTax() {
+    const total = cartItems.reduce((s,i) => s + i.price * i.qty, 0);
+    const tax = Math.round(total * 0.14);
+    const el = document.getElementById('cart-tax');
+    if (el) el.textContent = tax.toLocaleString() + ' EGP';
+}
+updateTax();
+
+function checkout() {
+    if (!cartItems.length) {
+        alert('سلتك فارغة! أضف منتجات أولاً.');
+        return;
+    }
+    const confirmed = confirm('سيتم تأكيد طلبك الآن. هل أنت متأكد؟');
+    if (confirmed) {
+        localStorage.removeItem('jumia-cart');
+        alert('🎉 تم تأكيد طلبك بنجاح! سيتم التواصل معك خلال 24 ساعة.');
+        window.location.href = 'index.html';
+    }
+}
+</script>
+</body></html>

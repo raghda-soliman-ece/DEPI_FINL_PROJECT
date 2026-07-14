@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الشراء | جوميا مصر</title>
+    <link rel="stylesheet" href="style.css?v=chat1">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 25px; margin: 25px 0; }
+        .checkout-section { background: white; border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+        .checkout-section h3 { font-size: 17px; font-weight: 800; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .checkout-section h3 i { color: var(--primary); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 7px; color: #444; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: inherit; font-size: 14px; outline: none; transition: var(--transition); background: white; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(246,139,30,0.1); }
+        .payment-options { display: flex; flex-direction: column; gap: 12px; }
+        .payment-option { display: flex; align-items: center; gap: 14px; padding: 15px 18px; border: 2px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: var(--transition); }
+        .payment-option:hover { border-color: var(--primary); background: rgba(246,139,30,0.03); }
+        .payment-option.selected { border-color: var(--primary); background: rgba(246,139,30,0.06); }
+        .payment-option input[type="radio"] { accent-color: var(--primary); width: 18px; height: 18px; }
+        .payment-option .pay-label { font-weight: 700; font-size: 15px; }
+        .payment-option .pay-sub { font-size: 12px; color: var(--muted); }
+        .payment-option .pay-icon { font-size: 24px; margin-right: auto; }
+        .order-mini-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .order-mini-item img { width: 50px; height: 50px; object-fit: contain; border: 1px solid var(--border); border-radius: 4px; padding: 4px; }
+        .order-mini-item .item-name { font-size: 13px; font-weight: 600; flex: 1; }
+        .order-mini-item .item-price { font-weight: 800; font-size: 14px; white-space: nowrap; }
+        .success-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; }
+        .success-card { background: white; border-radius: 16px; padding: 50px 40px; text-align: center; max-width: 420px; width: 90%; }
+        .success-card .check-icon { font-size: 70px; color: #4caf50; margin-bottom: 20px; }
+        .success-card h2 { font-size: 26px; margin-bottom: 10px; }
+        .success-card p { color: var(--muted); margin-bottom: 25px; }
+        @media(max-width:768px){ .checkout-grid { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><div class="top-bar-links"><a href="#"><i class="fas fa-star text-orange"></i> جوميا ستار</a></div><div class="top-bar-promo"><i class="fas fa-lock"></i> دفع آمن ومشفر 100%</div></div></div>
+<header class="main-header"><div class="container header-inner"><div class="logo"><a href="index.html"><span class="logo-text">jumia</span></a></div><div class="user-actions"><a href="cart.html" class="action-link"><div class="cart-icon-wrapper"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></div><span>السلة</span></a></div></div></header>
+
+<!-- Checkout Steps -->
+<div style="background:white; border-bottom:1px solid var(--border); padding: 15px 0;">
+    <div class="container" style="display:flex; justify-content:center; gap:40px; font-size:14px;">
+        <div style="display:flex;align-items:center;gap:8px; color:var(--primary); font-weight:700;">
+            <span style="width:28px;height:28px;background:var(--primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;">1</span>
+            بيانات الشحن
+        </div>
+        <div style="display:flex;align-items:center;gap:8px; color:#ccc;">
+            <span style="width:28px;height:28px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;">2</span>
+            الدفع
+        </div>
+        <div style="display:flex;align-items:center;gap:8px; color:#ccc;">
+            <span style="width:28px;height:28px;background:#eee;border-radius:50%;display:flex;align-items:center;justify-content:center;">3</span>
+            تأكيد الطلب
+        </div>
+    </div>
+</div>
+
+<main class="container">
+    <div class="checkout-grid">
+        <!-- Left: Forms -->
+        <div>
+            <!-- Shipping Info -->
+            <div class="checkout-section">
+                <h3><i class="fas fa-map-marker-alt"></i> بيانات الشحن</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الاسم الأول</label>
+                        <input type="text" placeholder="محمد" id="first-name">
+                    </div>
+                    <div class="form-group">
+                        <label>الاسم الأخير</label>
+                        <input type="text" placeholder="أحمد" id="last-name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" placeholder="01xxxxxxxxx" id="phone">
+                </div>
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" placeholder="example@email.com" id="email">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>المحافظة</label>
+                        <select id="governorate">
+                            <option value="">اختر المحافظة</option>
+                            <option>القاهرة</option>
+                            <option>الجيزة</option>
+                            <option>الإسكندرية</option>
+                            <option>الشرقية</option>
+                            <option>الدقهلية</option>
+                            <option>البحيرة</option>
+                            <option>المنوفية</option>
+                            <option>القليوبية</option>
+                            <option>أسيوط</option>
+                            <option>سوهاج</option>
+                            <option>الأقصر</option>
+                            <option>أسوان</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة / الحي</label>
+                        <input type="text" placeholder="مثال: مدينة نصر" id="area">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>العنوان بالتفصيل</label>
+                    <textarea rows="2" placeholder="رقم الشارع، اسم الشارع، رقم المبنى..." id="address" style="resize:none;"></textarea>
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="checkout-section">
+                <h3><i class="fas fa-credit-card"></i> طريقة الدفع</h3>
+                <div class="payment-options">
+                    <label class="payment-option selected" onclick="selectPayment(this)">
+                        <input type="radio" name="payment" value="cod" checked>
+                        <div>
+                            <div class="pay-label">الدفع عند الاستلام</div>
+                            <div class="pay-sub">ادفع كاش لما يوصلك الطلب</div>
+                        </div>
+                        <i class="fas fa-money-bill-wave pay-icon" style="color:#4caf50;"></i>
+                    </label>
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <input type="radio" name="payment" value="card">
+                        <div>
+                            <div class="pay-label">بطاقة بنكية (Visa / Mastercard)</div>
+                            <div class="pay-sub">دفع إلكتروني آمن ومشفر</div>
+                        </div>
+                        <i class="fab fa-cc-visa pay-icon" style="color:#1a1f71;"></i>
+                    </label>
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <input type="radio" name="payment" value="vodafone">
+                        <div>
+                            <div class="pay-label">فودافون كاش</div>
+                            <div class="pay-sub">ادفع من محفظتك على طول</div>
+                        </div>
+                        <i class="fas fa-mobile-alt pay-icon" style="color:#e60000;"></i>
+                    </label>
+                    <label class="payment-option" onclick="selectPayment(this)">
+                        <input type="radio" name="payment" value="instapay">
+                        <div>
+                            <div class="pay-label">InstaPay</div>
+                            <div class="pay-sub">دفع فوري من أي بنك</div>
+                        </div>
+                        <i class="fas fa-bolt pay-icon" style="color:#7b2ff7;"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Order Summary -->
+        <aside>
+            <div class="checkout-section" style="position:sticky;top:90px;">
+                <h3><i class="fas fa-receipt"></i> ملخص الطلب</h3>
+                <div id="checkout-items"></div>
+                <!-- Coupon Input -->
+                <div style="margin-bottom:15px;">
+                    <label style="font-size:13px;font-weight:700;display:block;margin-bottom:7px;"><i class="fas fa-ticket-alt" style="color:var(--primary);"></i> كوبون الخصم</label>
+                    <div style="display:flex;gap:8px;">
+                        <input type="text" id="coupon-input" placeholder="أدخل الكوبون هنا..." style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:inherit;font-size:14px;outline:none;">
+                        <button class="btn btn-outline" onclick="applyCoupon()" style="padding:10px 14px;white-space:nowrap;">تطبيق</button>
+                    </div>
+                    <div id="coupon-msg" style="font-size:12px;margin-top:6px;"></div>
+                </div>
+                <div class="summary-row"><span>المجموع الفرعي</span><span id="co-subtotal">0 EGP</span></div>
+                <div class="summary-row" id="discount-row" style="display:none;color:#4caf50;"><span>الخصم</span><span id="co-discount"></span></div>
+                <div class="summary-row"><span>الشحن</span><span style="color:#4caf50;font-weight:700;">مجاناً <i class="fas fa-truck"></i></span></div>
+                <div class="summary-total"><span>الإجمالي</span><span id="co-total">0 EGP</span></div>
+                <button class="btn btn-orange" style="width:100%;margin-top:20px;padding:16px;font-size:16px;justify-content:center;" onclick="placeOrder()">
+                    <i class="fas fa-check-circle"></i> تأكيد الطلب الآن
+                </button>
+                <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:12px;"><i class="fas fa-lock"></i> بياناتك محمية ومشفرة بالكامل</p>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<!-- Success Modal -->
+<div class="success-overlay" id="success-overlay">
+    <div class="success-card">
+        <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+        <h2>تم تأكيد طلبك! 🎉</h2>
+        <p>شكراً لتسوقك معنا. سيتم التواصل معك خلال 24 ساعة لتأكيد موعد التوصيل.</p>
+        <p style="font-weight:700; font-size:18px; color:var(--primary);">رقم الطلب: #JM-<span id="order-num"></span></p>
+        <a href="index.html" class="btn btn-orange" style="margin-top:10px; justify-content:center;">
+            <i class="fas fa-home"></i> العودة للرئيسية
+        </a>
+    </div>
+</div>
+
+<script src="config.js"></script>
+<script src="script.js?v=20260714chat"></script>
+<script src="chat-widget.js?v=2"></script>
+<script>
+function selectPayment(el) {
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function renderCheckoutItems() {
+    const container = document.getElementById('checkout-items');
+    if (!cartItems.length) {
+        container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:20px;">سلتك فارغة!</p>';
+        return;
+    }
+    const total = cartItems.reduce((s,i) => s + i.price * i.qty, 0);
+    document.getElementById('co-subtotal').textContent = total.toLocaleString() + ' EGP';
+    document.getElementById('co-total').textContent = total.toLocaleString() + ' EGP';
+    container.innerHTML = cartItems.map(item => `
+        <div class="order-mini-item">
+            <img src="${item.img || 'https://placehold.co/50x50/f5f5f5/999?text=Item'}" alt="${item.name}" onerror="this.src='https://placehold.co/50x50/f5f5f5/999?text=Item'">
+            <div class="item-name">${item.name} <span style="color:var(--muted);font-weight:400;">×${item.qty}</span></div>
+            <div class="item-price">EGP ${(item.price * item.qty).toLocaleString()}</div>
+        </div>`).join('');
+}
+
+async function placeOrder() {
+    const required = ['first-name','last-name','phone','governorate','address'];
+    let valid = true;
+    required.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) { el.style.borderColor = '#e53935'; valid = false; }
+        else el.style.borderColor = '';
+    });
+    if (!valid) { alert('من فضلك أكمل بيانات الشحن كلها!'); return; }
+
+    const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
+    const payLabels = { cod: 'الدفع عند الاستلام', card: 'بطاقة بنكية', vodafone: 'فودافون كاش', instapay: 'InstaPay' };
+    const subtotal = cartItems.reduce((s,i) => s + i.price * i.qty, 0);
+    let discount = 0;
+    if (appliedCoupon) {
+        if (appliedCoupon.type === 'percent') discount = Math.round(subtotal * appliedCoupon.discount / 100);
+        else discount = appliedCoupon.discount;
+    }
+    
+    let orderNum = Math.floor(Math.random() * 90000 + 10000);
+
+    if (currentUser && currentUser.token) {
+        try {
+            // Sync local cart items into the authenticated basket first
+            if (typeof syncCartToBackend === 'function') {
+                await syncCartToBackend();
+            }
+
+            // Matches OrderCreateDto on the backend (no basketId — basket comes from the JWT user)
+            const reqBody = {
+                deliveryMethodId: 1,
+                shippingAddress: {
+                    firstName: document.getElementById('first-name').value,
+                    lastName: document.getElementById('last-name').value,
+                    street: document.getElementById('address').value,
+                    city: document.getElementById('area').value || document.getElementById('governorate').value,
+                    state: document.getElementById('governorate').value,
+                    zipCode: '11111'
+                }
+            };
+
+            const oRes = await fetch(`${API_BASE_URL}/Orders`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentUser.token}`
+                },
+                body: JSON.stringify(reqBody)
+            });
+
+            if (oRes.ok) {
+                const orderResp = await oRes.json();
+                orderNum = orderResp.id || orderResp.Id || orderNum;
+            } else {
+                let msg = 'تعذر إنشاء الطلب على الخادم';
+                try {
+                    const err = await oRes.json();
+                    msg = err.message || err.Message || msg;
+                } catch (e) {}
+                console.warn(msg);
+                alert(msg + '\nسيتم حفظ الطلب محلياً.');
+            }
+        } catch (e) {
+            console.error('Order API failed, saving locally only.', e);
+        }
+    }
+
+    const orderData = {
+        id: 'JM-' + orderNum,
+        date: new Date().toLocaleDateString('ar-EG'),
+        items: cartItems,
+        total: subtotal - discount,
+        payment: payLabels[paymentMethod],
+        address: document.getElementById('address').value,
+    };
+    
+    const orders = JSON.parse(localStorage.getItem('jumia-orders') || '[]');
+    orders.unshift(orderData);
+    localStorage.setItem('jumia-orders', JSON.stringify(orders));
+
+    document.getElementById('order-num').textContent = orderNum;
+    document.getElementById('success-overlay').style.display = 'flex';
+    cartItems = [];
+    localStorage.removeItem('jumia-cart');
+    if (typeof updateCartUI === 'function') updateCartUI();
+}
+
+renderCheckoutItems();
+</script>
+</body></html>
